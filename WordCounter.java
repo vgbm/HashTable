@@ -65,7 +65,8 @@ public class WordCounter {
 		try {
 			
 			BufferedWriter fileWriter = new BufferedWriter(new FileWriter(outputFile));
-		
+			
+			
 		
 		} catch (IOException e) {
 			e.printStackTrace();
