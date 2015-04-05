@@ -1,15 +1,18 @@
 package HashTable;
 
+import java.util.Iterator;
+import java.util.LinkedList;
+
 public class myHashTable {
 
 	
 	// The array that stores the hashed key
-	private Entry[] table;
+	private LinkedList<Entry>[] table;
 	private int tableLength;
 
-	public myHashTable() {
-		tableLength = getPrime(5);//default list size
-		table = new Entry[tableLength];
+	public myHashTable(int length) {
+		tableLength = getPrime(length);//default list size
+		table = new LinkedList[tableLength];
 	}
 
 	
@@ -34,8 +37,8 @@ public class myHashTable {
 	}
 
 	
-	//primary hash function which uses Java's built in hashing method
-	private int h1(String word) {
+	//hash function which uses Java's built in hashing method
+	private int hash(String word) {
 		int hashVal = word.hashCode();
 		hashVal %= tableLength;
 		if (hashVal < 0) {
@@ -45,85 +48,116 @@ public class myHashTable {
 	}
 
 	
-	//hash function for determining stride length
-	//uses word length to determine stride
-	private int h2(String word) {
-		return word.length();
+	private boolean needsRehashed(){
+		
+		for(int list=0;list<tableLength;list++){
+			
+			if(table[list]!=null){				
+				if(table[list].size()>tableLength)
+					return true;
+			}		
+		}
+		
+		return false;
+		
 	}
-
 	
-	//TODO
+	//TODO reheash when chains get longer than the list
 	private void rehash(){
 		
-	}
-	
-	
-	//tries to find the first open slot
-	private int probe(String key) {
-		int i = h1(key)%tableLength; // first hash function
-		int j = h2(key); // second hash function
-		int iterations = 0;
-		// keep probing while the current position is occupied (non-empty and
-		// non-removed)
-		//i%=tableLength;
-		while (table[i] != null) {
-			i = (i + j) % tableLength;
-			iterations++;
-			if (iterations > tableLength) {
-				return -1;
+		myHashTable replacement = new myHashTable((int)(tableLength*2));
+
+		for(int i = 0; i<tableLength; i++){
+			
+			if(table[i]!=null){
+				Iterator<Entry> iter = table[i].iterator();
+				
+				while(iter.hasNext()){
+					Entry entry = iter.next();
+					replacement.insert(entry.key, entry.frequency);
+				}
 			}
 		}
-		return i;
+		
+		table = replacement.table;
+		tableLength = replacement.tableLength;
 	}
-
+	
 	
 	// Make private after testing
-	public int findKey(String key) {
-		int i = h1(key); // first hash function
-		int j = h2(key); // second hash function
-		int iterations = 0;
+	public int indexOfEntry(String key,int slot) {
 		
-		i%=tableLength;
-		while (table[i] != null) {
-			// return if key is found, otherwise continue
-			if (table[i].key.equals(key)) {
-				return i;
-			}
-			i = (i + j) % tableLength;
-			iterations++;
-			if (iterations > tableLength)
-				return -1;
+		if(table[slot]==null){
+			table[slot] = new LinkedList<Entry>();
+			return -1;
+		}
+		
+		Iterator<Entry> listIter = table[slot].iterator();
+		int index = 0;
+		
+		while(listIter.hasNext()){ //maybe do - while
+			
+			if(listIter.next().key.equals(key))
+				return index;
 		}
 		return -1;
 	}
 	
 
-	public void insert(String key) {
+	public void insert(String key, int frequency) {
 
-		int slotIndex = probe(key);
-		int keyIndex = findKey(key);
-
-		if (slotIndex == -1) {
-			//TODO: increase length, reinsert everything
-		} 
+		//System.out.println(getStatistics());
+		
+		int slotIndex = hash(key);
+		int position = indexOfEntry(key,slotIndex);
+		
+		if(position!=-1){
+			table[slotIndex].get(position).frequency++;
+		}
+		
 		else{
-			if(keyIndex==-1){
-				table[slotIndex] = new Entry(key);
-			} else {
-				table[keyIndex].incFreq();
+			table[slotIndex].add(new Entry(key,frequency));
+		}
+		
+		if(needsRehashed())
+			rehash();
+	}
+	
+	
+	public String getStatistics(){
+		
+		StringBuilder str = new StringBuilder("List Lengths: ");
+		for(int i=0; i<tableLength;i++){
+			if(table[i]!=null){
+				str.append(table[i].size()+" ");
+			}
+			else{
+				str.append("0 ");
 			}
 		}
+		return str.toString();
 	}
 	
 	
 	public String toString(){
 		StringBuilder str = new StringBuilder();
-		for(Entry entry:table){
-			if(entry!=null)str.append(entry);
+		
+		for(int i=0;i<tableLength;i++){
+			
+			if(table[i]!=null){
+				Iterator<Entry> iter = table[i].iterator();
+				
+				while(iter.hasNext()){
+					str.append(iter.next());
+				}
+			}
+			
+			str.append("\n");
 		}
 		
 		return str.toString();
 	}
+	
 	
 	// An Entry contains the unique words and their frequencies
 	private class Entry {
@@ -131,9 +165,9 @@ public class myHashTable {
 		private String key; // the unique word
 		private int frequency;
 
-		private Entry(String key) {
+		private Entry(String key, int frequency) {
 			this.key = key;
-			this.frequency = 1;
+			this.frequency = frequency;
 		}
 		
 		public void incFreq(){

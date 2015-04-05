@@ -9,7 +9,7 @@ import java.util.Scanner;
 
 public class WordCounter {
 
-	static myHashTable table = new myHashTable();
+	static myHashTable table = new myHashTable(50); //default length of 10
 	
 	
 	public WordCounter(){
@@ -24,7 +24,9 @@ public class WordCounter {
 		String status="";
 		
 		status=buildHashTable(inFile);
-		if(!status.equals("success")) return status;
+		if(!status.equals("Success")) return status;
+		
+		System.out.println(table.getStatistics());
 		
 		status=createOutputFile(outFile);
 		if(!status.equals("success")) return status;
@@ -45,10 +47,13 @@ public class WordCounter {
 				line = fileScanner.nextLine();
 				for(String word:line.split("[^a-zA-Z]")){
 					
-					table.insert(word);
+					if(!word.equals(""))
+						table.insert(word.toLowerCase(),1);
 					
 				}
 			}
+			
+			fileScanner.close();
 			
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
@@ -66,13 +71,18 @@ public class WordCounter {
 			
 			BufferedWriter fileWriter = new BufferedWriter(new FileWriter(outputFile));
 			
-			
+			fileWriter.close();
 		
 		} catch (IOException e) {
 			e.printStackTrace();
 			return "Output File error";
 		}
-		return "Success";
+		
+		return "Okay;";//add the shit he wants here
+	}
+	
+	public String toString(){
+		return table.toString();
 	}
 	
 }
