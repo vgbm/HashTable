@@ -26,12 +26,10 @@ public class WordCounter {
 		status=buildHashTable(inFile);
 		if(!status.equals("Success")) return status;
 		
-		System.out.println(table.getStatistics());
-		
 		status=createOutputFile(outFile);
-		if(!status.equals("success")) return status;
+		if(!status.equals("Success")) return status;
 		
-		return "Success";
+		return "Okay; "+table.getStatistics();
 		
 	}
 	
@@ -71,6 +69,8 @@ public class WordCounter {
 			
 			BufferedWriter fileWriter = new BufferedWriter(new FileWriter(outputFile));
 			
+			fileWriter.write(table.toString());
+			
 			fileWriter.close();
 		
 		} catch (IOException e) {
@@ -78,7 +78,7 @@ public class WordCounter {
 			return "Output File error";
 		}
 		
-		return "Okay;";//add the shit he wants here
+		return "Success";
 	}
 	
 	public String toString(){

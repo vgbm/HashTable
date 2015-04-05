@@ -10,6 +10,8 @@ public class myHashTable {
 	private LinkedList<Entry>[] table;
 	private int tableLength;
 
+	
+	@SuppressWarnings("unchecked")
 	public myHashTable(int length) {
 		tableLength = getPrime(length);//default list size
 		table = new LinkedList[tableLength];
@@ -48,6 +50,9 @@ public class myHashTable {
 	}
 
 	
+	//Determines that a rehash is needed when the length of any one
+	//bucket is longer than the hash table's length
+	//This is because the load factor exceeds one-to-one
 	private boolean needsRehashed(){
 		
 		for(int list=0;list<tableLength;list++){
@@ -62,7 +67,7 @@ public class myHashTable {
 		
 	}
 	
-	//TODO reheash when chains get longer than the list
+
 	private void rehash(){
 		
 		myHashTable replacement = new myHashTable((int)(tableLength*2));
@@ -84,8 +89,7 @@ public class myHashTable {
 	}
 	
 	
-	// Make private after testing
-	public int indexOfEntry(String key,int slot) {
+	private int indexOfEntry(String key,int slot) {
 		
 		if(table[slot]==null){
 			table[slot] = new LinkedList<Entry>();
@@ -105,8 +109,6 @@ public class myHashTable {
 	
 
 	public void insert(String key, int frequency) {
-
-		//System.out.println(getStatistics());
 		
 		int slotIndex = hash(key);
 		int position = indexOfEntry(key,slotIndex);
@@ -126,15 +128,18 @@ public class myHashTable {
 	
 	public String getStatistics(){
 		
-		StringBuilder str = new StringBuilder("List Lengths: ");
+		int words=0;
+		
 		for(int i=0; i<tableLength;i++){
+			
 			if(table[i]!=null){
-				str.append(table[i].size()+" ");
-			}
-			else{
-				str.append("0 ");
+				words+=table[i].size();
 			}
 		}
+		
+		StringBuilder str = new StringBuilder("Total Words: "+words+
+				"\tHash table size: "+tableLength+
+				"\tAvg length of collision lists: "+words/tableLength);
 		return str.toString();
 	}
 	
@@ -168,10 +173,6 @@ public class myHashTable {
 		private Entry(String key, int frequency) {
 			this.key = key;
 			this.frequency = frequency;
-		}
-		
-		public void incFreq(){
-			frequency++;
 		}
 		
 		public String toString(){
