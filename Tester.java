@@ -1,11 +1,9 @@
-package HashTable;
-
 public class Tester {
 
 	public static void main(String[] args) {
 		
-		System.out.println(WordCounter.wordCount("testIn.txt", "out.txt"));
-		
+		//Simple test usage
+		System.out.println(WordCounter.wordCount("testIn.txt", "testOut.txt"));
 		
 	}
 

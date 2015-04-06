@@ -1,0 +1,17 @@
+(the: 4)
+(in: 2)
+(socks: 1)
+(is: 2)
+(ll: 1)
+(a: 2)
+(test: 2)
+(cat: 1)
+(fox: 1)
+(go: 1)
+(oh: 1)
+(hat: 1)
+(this: 2)
+(places: 1)
+(you: 1)
+
+Console: Okay; Total Words: 15,	Hash table size: 40,	Avg length of collision lists: 0
