@@ -47,6 +47,7 @@ public class WordCounter {
 					
 					if(!word.equals(""))
 						table.insert(word.toLowerCase(),1);
+
 					
 				}
 			}

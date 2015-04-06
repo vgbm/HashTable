@@ -4,7 +4,7 @@ public class Tester {
 
 	public static void main(String[] args) {
 		
-		System.out.println(WordCounter.wordCount("in", "out"));
+		System.out.println(WordCounter.wordCount("testIn.txt", "out.txt"));
 		
 		
 	}

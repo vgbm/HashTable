@@ -70,7 +70,7 @@ public class myHashTable {
 
 	private void rehash(){
 		
-		myHashTable replacement = new myHashTable((int)(tableLength*2));
+		myHashTable replacement = new myHashTable(getPrime((int)(tableLength*2)));
 
 		for(int i = 0; i<tableLength; i++){
 			
@@ -96,13 +96,9 @@ public class myHashTable {
 			return -1;
 		}
 		
-		Iterator<Entry> listIter = table[slot].iterator();
-		int index = 0;
-		
-		while(listIter.hasNext()){ //maybe do - while
-			
-			if(listIter.next().key.equals(key))
-				return index;
+		for(int i=0;i<table[slot].size();i++){
+			if(table[slot].get(i).key.equals(key))
+				return i;
 		}
 		return -1;
 	}
@@ -155,9 +151,9 @@ public class myHashTable {
 				while(iter.hasNext()){
 					str.append(iter.next());
 				}
+				str.append("\n");
 			}
 			
-			str.append("\n");
 		}
 		
 		return str.toString();
